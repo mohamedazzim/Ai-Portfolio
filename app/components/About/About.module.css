@@ -1,0 +1,158 @@
+.section {
+  background: #050505;
+  padding: 120px 24px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: #e8631a;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #f5f0eb;
+  margin-bottom: 28px;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgba(245, 240, 235, 0.65);
+  margin-bottom: 16px;
+}
+
+.links {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.primaryBtn,
+.ghostBtn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+
+.primaryBtn {
+  background: #e8631a;
+  color: #fff;
+  border: 1px solid #e8631a;
+}
+
+.primaryBtn:hover {
+  background: #d45a15;
+  border-color: #d45a15;
+}
+
+.ghostBtn {
+  background: transparent;
+  color: rgba(245, 240, 235, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ghostBtn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #f5f0eb;
+}
+
+.statsCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.024);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statNum {
+  font-size: 32px;
+  font-weight: 800;
+  color: #e8631a;
+}
+
+.statLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(245, 240, 235, 0.5);
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 80px 20px;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .statsCol {
+    flex-direction: row;
+  }
+
+  .statCard {
+    flex: 1;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 60px 16px;
+  }
+
+  .heading {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .body {
+    font-size: 14px;
+  }
+
+  .links {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .primaryBtn,
+  .ghostBtn {
+    text-align: center;
+  }
+
+  .statsCol {
+    flex-direction: column;
+  }
+
+  .statNum {
+    font-size: 26px;
+  }
+}

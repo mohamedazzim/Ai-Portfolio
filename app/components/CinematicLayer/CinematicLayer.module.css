@@ -1,0 +1,11 @@
+.container {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.container canvas {
+  display: block;
+}

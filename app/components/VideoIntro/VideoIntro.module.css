@@ -1,0 +1,316 @@
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.videoContainer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(20px) saturate(1.3);
+  transform: scale(1.1);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.6) 0%, rgba(10, 10, 10, 0.3) 40%, rgba(10, 10, 10, 0.7) 100%);
+  z-index: 1;
+}
+
+.fgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+}
+
+.content {
+  position: absolute;
+  bottom: 8vh;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+  padding: 0 24px;
+  pointer-events: none;
+}
+
+.tagline {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 107, 53, 0.9);
+  margin-bottom: 32px;
+  opacity: 0;
+}
+
+.nameStack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.firstName,
+.lastName {
+  display: block;
+  font-size: clamp(48px, 12vw, 140px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  opacity: 0;
+  text-shadow:
+    0 0 80px rgba(255, 107, 53, 0.3),
+    0 4px 60px rgba(0, 0, 0, 0.5);
+}
+
+.role {
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0;
+}
+
+.heroActions {
+  margin-top: 24px;
+  pointer-events: all;
+}
+
+.resumeBtn {
+  display: inline-block;
+  padding: 10px 28px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background: rgba(232, 99, 26, 0.2);
+  border: 1px solid rgba(232, 99, 26, 0.5);
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.resumeBtn:hover {
+  background: #e8631a;
+  border-color: #e8631a;
+}
+
+.controls {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  display: flex;
+  gap: 12px;
+  z-index: 20;
+}
+
+.glassButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: all;
+}
+
+.glassButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.glassButton:active {
+  transform: scale(0.95);
+}
+
+.soundBadge {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.soundPulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b35;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.3);
+  }
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  pointer-events: all;
+  opacity: 0;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(180deg, transparent, rgba(255, 107, 53, 0.8), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleY(0.6);
+    transform-origin: top;
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.scrollText {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    bottom: 24px;
+    left: 24px;
+  }
+
+  .glassButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .soundBadge {
+    top: 24px;
+    right: 24px;
+    padding: 8px 14px;
+    font-size: 10px;
+  }
+
+  .scrollIndicator {
+    bottom: 24px;
+  }
+
+  .scrollLine {
+    height: 36px;
+  }
+
+  .tagline {
+    font-size: 10px;
+    margin-bottom: 24px;
+  }
+
+  .role {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .heroActions {
+    margin-top: 16px;
+  }
+
+  .resumeBtn {
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    bottom: 10vh;
+    padding: 0 16px;
+  }
+
+  .firstName,
+  .lastName {
+    font-size: clamp(32px, 14vw, 56px);
+  }
+
+  .role {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+
+  .controls {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .glassButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .scrollIndicator {
+    bottom: 16px;
+  }
+}

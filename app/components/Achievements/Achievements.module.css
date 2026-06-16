@@ -1,0 +1,114 @@
+.section {
+  background: #060606;
+  padding: 120px 24px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 48px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: #e8631a;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  color: #f5f0eb;
+}
+
+.certsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.certCard {
+  background: rgba(255, 255, 255, 0.024);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.3s;
+}
+
+.certCard:hover {
+  border-color: var(--cert-color, rgba(255, 255, 255, 0.15));
+}
+
+.certIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.certName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5f0eb;
+  margin-bottom: 2px;
+}
+
+.certOrg {
+  font-size: 12px;
+  color: rgba(245, 240, 235, 0.45);
+}
+
+.certBadge {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .certsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 80px 20px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .certsGrid {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 60px 16px;
+  }
+
+  .certsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .certCard {
+    padding: 16px;
+  }
+
+  .certName {
+    font-size: 13px;
+  }
+}
