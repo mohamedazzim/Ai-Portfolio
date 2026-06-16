@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AI Portfolio | Cinematic Experience",
   description: "Modern cinematic portfolio with immersive video and Three.js effects",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
