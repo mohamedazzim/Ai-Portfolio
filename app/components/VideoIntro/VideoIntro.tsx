@@ -21,6 +21,7 @@ export default function VideoIntro() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
+  const wasUnmutedRef = useRef(false);
 
   const togglePlay = useCallback(() => {
     const videos = [bgVideoRef.current, fgVideoRef.current];
@@ -39,6 +40,7 @@ export default function VideoIntro() {
     
     const newMuted = !isMuted;
     fgVideo.muted = newMuted;
+    wasUnmutedRef.current = !newMuted;
     
     console.log("[Video] Audio toggle:", {
       fgMuted: fgVideo.muted,
@@ -183,7 +185,24 @@ export default function VideoIntro() {
 
     timelineRef.current = tl;
 
+    const handleScroll = () => {
+      if (!fgVideo || !heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const heroVisible = rect.bottom > 100 && rect.top < window.innerHeight;
+
+      if (!heroVisible) {
+        fgVideo.muted = true;
+        setIsMuted(true);
+      } else if (heroVisible && wasUnmutedRef.current) {
+        fgVideo.muted = false;
+        setIsMuted(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       bgVideo.removeEventListener("loadeddata", handleLoadedData);
       fgVideo.removeEventListener("loadeddata", handleLoadedData);
       bgVideo.removeEventListener("canplay", handleCanPlay);
