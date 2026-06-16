@@ -6,7 +6,7 @@ import styles from "./VideoIntro.module.css";
 
 const CinematicLayer = React.lazy(() => import("../CinematicLayer"));
 
-const VIDEO_SRC = "/videos/talking-head.mp4?v=2";
+const VIDEO_SRC = "/videos/talking-head.mp4?v=3";
 
 export default function VideoIntro() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -15,18 +15,32 @@ export default function VideoIntro() {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [videoReady, setVideoReady] = useState(false);
 
   const togglePlay = useCallback(() => {
     const videos = [bgVideoRef.current, fgVideoRef.current];
     if (isPlaying) {
       videos.forEach((v) => v?.pause());
+      setIsPlaying(false);
     } else {
-      videos.forEach((v) => v?.play().catch(() => {}));
+      videos.forEach((v) => v?.play().catch(console.error));
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
   }, [isPlaying]);
+
+  const toggleMute = useCallback(() => {
+    const videos = [bgVideoRef.current, fgVideoRef.current];
+    const newMuted = !isMuted;
+    videos.forEach((v) => {
+      if (v) v.muted = newMuted;
+    });
+    setIsMuted(newMuted);
+  }, [isMuted]);
 
   const scrollToNext = useCallback(() => {
     const nextSection = heroRef.current?.nextElementSibling;
@@ -35,24 +49,75 @@ export default function VideoIntro() {
     }
   }, []);
 
+  const attemptPlay = useCallback(async (video: HTMLVideoElement, label: string) => {
+    try {
+      video.muted = true;
+      video.currentTime = 0;
+      await video.play();
+      console.log(`[Video] ${label} autoplay started`);
+      return true;
+    } catch (err) {
+      console.warn(`[Video] ${label} autoplay blocked:`, err);
+      return false;
+    }
+  }, []);
+
   useEffect(() => {
     const bgVideo = bgVideoRef.current;
     const fgVideo = fgVideoRef.current;
     if (!bgVideo || !fgVideo) return;
 
+    console.log("[Video] Component mounted, setting up video");
+
+    const handleLoadedData = () => {
+      console.log("[Video] loadeddata event fired");
+      setVideoReady(true);
+    };
+
+    const handleCanPlay = () => {
+      console.log("[Video] canplay event fired");
+    };
+
+    const handleCanPlayThrough = () => {
+      console.log("[Video] canplaythrough event fired");
+    };
+
+    const handleError = (e: Event) => {
+      console.error("[Video] Error loading video:", e);
+    };
+
+    bgVideo.addEventListener("loadeddata", handleLoadedData);
+    fgVideo.addEventListener("loadeddata", handleLoadedData);
+    bgVideo.addEventListener("canplay", handleCanPlay);
+    fgVideo.addEventListener("canplay", handleCanPlay);
+    bgVideo.addEventListener("canplaythrough", handleCanPlayThrough);
+    fgVideo.addEventListener("canplaythrough", handleCanPlayThrough);
+    bgVideo.addEventListener("error", handleError);
+    fgVideo.addEventListener("error", handleError);
+
     const playVideos = async () => {
-      try {
-        bgVideo.muted = true;
-        await Promise.all([
-          bgVideo.play().catch(() => {}),
-          fgVideo.play().catch(() => {}),
-        ]);
-      } catch {
-        console.log("Autoplay prevented");
+      console.log("[Video] Attempting to play videos");
+
+      const bgSuccess = await attemptPlay(bgVideo, "bgVideo");
+      const fgSuccess = await attemptPlay(fgVideo, "fgVideo");
+
+      if (bgSuccess && fgSuccess) {
+        setIsPlaying(true);
+        console.log("[Video] Both videos playing successfully");
+      } else if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++;
+        console.log(`[Video] Retrying playback (attempt ${retryCountRef.current}/${maxRetries})`);
+        setTimeout(playVideos, 1000 * retryCountRef.current);
+      } else {
+        console.log("[Video] Autoplay blocked after retries, waiting for user interaction");
       }
     };
 
-    playVideos();
+    if (bgVideo.readyState >= 2) {
+      playVideos();
+    } else {
+      bgVideo.addEventListener("canplay", () => playVideos(), { once: true });
+    }
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -94,20 +159,18 @@ export default function VideoIntro() {
 
     timelineRef.current = tl;
 
-    const handleScroll = () => {
-      if (!fgVideo || !heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const heroVisible = rect.bottom > 100 && rect.top < window.innerHeight;
-      fgVideo.muted = !heroVisible;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      bgVideo.removeEventListener("loadeddata", handleLoadedData);
+      fgVideo.removeEventListener("loadeddata", handleLoadedData);
+      bgVideo.removeEventListener("canplay", handleCanPlay);
+      fgVideo.removeEventListener("canplay", handleCanPlay);
+      bgVideo.removeEventListener("canplaythrough", handleCanPlayThrough);
+      fgVideo.removeEventListener("canplaythrough", handleCanPlayThrough);
+      bgVideo.removeEventListener("error", handleError);
+      fgVideo.removeEventListener("error", handleError);
       tl.kill();
     };
-  }, []);
+  }, [attemptPlay]);
 
   return (
     <section ref={heroRef} className={styles.hero}>
@@ -116,6 +179,7 @@ export default function VideoIntro() {
           ref={bgVideoRef}
           className={styles.bgVideo}
           src={VIDEO_SRC}
+          autoPlay
           loop
           muted
           playsInline
@@ -126,7 +190,9 @@ export default function VideoIntro() {
           ref={fgVideoRef}
           className={styles.fgVideo}
           src={VIDEO_SRC}
+          autoPlay
           loop
+          muted
           playsInline
           preload="auto"
         />
@@ -165,6 +231,24 @@ export default function VideoIntro() {
           ) : (
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <polygon points="3,2 14,8 3,14" />
+            </svg>
+          )}
+        </button>
+        <button
+          className={styles.glassButton}
+          onClick={toggleMute}
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
             </svg>
           )}
         </button>
