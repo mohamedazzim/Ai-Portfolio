@@ -34,11 +34,19 @@ export default function VideoIntro() {
   }, [isPlaying]);
 
   const toggleMute = useCallback(() => {
-    const videos = [bgVideoRef.current, fgVideoRef.current];
+    const fgVideo = fgVideoRef.current;
+    if (!fgVideo) return;
+    
     const newMuted = !isMuted;
-    videos.forEach((v) => {
-      if (v) v.muted = newMuted;
+    fgVideo.muted = newMuted;
+    
+    console.log("[Video] Audio toggle:", {
+      fgMuted: fgVideo.muted,
+      fgVolume: fgVideo.volume,
+      bgMuted: bgVideoRef.current?.muted,
+      bgVolume: bgVideoRef.current?.volume
     });
+    
     setIsMuted(newMuted);
   }, [isMuted]);
 
@@ -51,10 +59,16 @@ export default function VideoIntro() {
 
   const attemptPlay = useCallback(async (video: HTMLVideoElement, label: string) => {
     try {
-      video.muted = true;
+      if (label === "bgVideo") {
+        video.muted = true;
+        video.volume = 0;
+      }
       video.currentTime = 0;
       await video.play();
-      console.log(`[Video] ${label} autoplay started`);
+      console.log(`[Video] ${label} autoplay started`, {
+        muted: video.muted,
+        volume: video.volume
+      });
       return true;
     } catch (err) {
       console.warn(`[Video] ${label} autoplay blocked:`, err);
@@ -85,6 +99,16 @@ export default function VideoIntro() {
     const handleError = (e: Event) => {
       console.error("[Video] Error loading video:", e);
     };
+
+    bgVideo.muted = true;
+    bgVideo.volume = 0;
+    
+    console.log("[Video] Audio state initialized:", {
+      bgMuted: bgVideo.muted,
+      bgVolume: bgVideo.volume,
+      fgMuted: fgVideo.muted,
+      fgVolume: fgVideo.volume
+    });
 
     bgVideo.addEventListener("loadeddata", handleLoadedData);
     fgVideo.addEventListener("loadeddata", handleLoadedData);
